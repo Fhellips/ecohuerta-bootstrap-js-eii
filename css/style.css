@@ -1,0 +1,28 @@
+:root {
+  --eco-verde: #176c43;
+  --eco-oscuro: #10462e;
+  --eco-claro: #e8f4e9;
+}
+
+html { scroll-behavior: smooth; }
+body { color: #203529; background: #fcfdfa; }
+.navbar-brand { letter-spacing: -.03em; }
+.hero { background: linear-gradient(115deg, #e6f4e4 0%, #f4f8e7 62%, #e2f0d7 100%); }
+.hero .lead { max-width: 60ch; }
+.hero-art { background: #fff9e9; border: 1px solid #d8e8c9; }
+.plant-illustration { font-size: 6rem; line-height: 1.4; }
+.summary-card, .crop-card { border-color: #e0e8dd; border-radius: 1rem; }
+.summary-card .display-6 { color: var(--eco-verde); }
+.crop-card { overflow: hidden; transition: transform .15s ease, box-shadow .15s ease; }
+.crop-card:hover { transform: translateY(-2px); box-shadow: 0 .6rem 1.3rem rgb(20 70 40 / 10%); }
+.crop-cover { min-height: 130px; display: grid; place-items: center; letter-spacing: .14em; font-weight: 800; color: #fff; }
+.crop-tomate { background: linear-gradient(135deg, #b83131, #e57a48); }
+.crop-lechuga { background: linear-gradient(135deg, #347f4f, #81b964); }
+.crop-zanahoria { background: linear-gradient(135deg, #bd6525, #e6a140); }
+.crop-generico { background: linear-gradient(135deg, #246544, #62a878); }
+#listaCultivos .badge { font-weight: 600; }
+:focus-visible { outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .crop-card { transition: none; }
+}
