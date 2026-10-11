@@ -618,6 +618,39 @@ Guarda y recarga `index.html`. Busca en el HTML el elemento con `id="cultivosTit
 
 **Predice:** ¿qué sucede si cambias el identificador en JavaScript por uno inexistente y accedes a `textContent`? Prueba en un fragmento separado, lee el error y restaura el identificador correcto.
 
+### Relacionar HTML y JavaScript
+
+Observa cómo un identificador conecta ambos archivos. En `index.html` ya existe un título:
+
+```html
+<h2 id="cultivosTitulo" class="h3 mb-1">Mis cultivos</h2>
+```
+
+En JavaScript, la búsqueda `document.getElementById("cultivosTitulo")` recupera **ese elemento**. El valor de `id` debe coincidir exactamente: `cultivostitulo` y `cultivosTitulo` no son iguales.
+
+Puedes inspeccionar diferentes elementos sin modificarlos:
+
+```js
+console.log(document.getElementById("totalCultivos").textContent);
+console.log(document.querySelector("#cultivosTitulo").textContent);
+console.log(document.querySelector(".crop-card")?.textContent);
+```
+
+`getElementById()` busca un identificador. `querySelector()` acepta un selector CSS: `#` para un identificador y `.` para una clase. El operador `?.` evita intentar leer `textContent` si el selector no devuelve ningún elemento; el resultado sería `undefined`. No uses ese operador para ocultar un error cuando sabes que el elemento **debe** existir.
+
+**Predice:** ¿cuál de estas búsquedas podría devolver `null` si quitas las tarjetas estáticas de `index.html`? Prueba sin eliminar permanentemente el contenido de la página.
+
+### Inspeccionar clases sin cambiar datos
+
+```js
+const zonaCultivos = document.getElementById("cultivos");
+console.log(zonaCultivos.classList.contains("container"));
+zonaCultivos.classList.add("border-top");
+zonaCultivos.classList.remove("border-top");
+```
+
+`classList` permite modificar clases de estilo y `contains()` comprueba si existe una clase. Es distinto de `textContent`, que modifica texto. En el gestor necesitarás mostrar u ocultar el aviso `sinResultados`: observa en el HTML que inicialmente tiene la clase Bootstrap `d-none`.
+
 ### Escuchar lo que escribe el usuario
 
 ```js
@@ -657,6 +690,98 @@ listaEjemplo.append(columnaEjemplo);
 
 Observa cómo `createElement()` crea elementos, `className` les asigna clases Bootstrap y `append()` los agrega al documento. No utilices `innerHTML` con textos provenientes del usuario: si necesitas mostrar esos textos, usa `textContent`.
 
+### De un objeto JavaScript a información visible
+
+En la práctica anterior creaste objetos con propiedades. Ahora utiliza **un único objeto** para construir una tarjeta desde sus datos, en lugar de escribir cada texto directamente en HTML.
+
+Prueba este ejemplo **por separado**, después de comentar la tarjeta de «Albahaca» que construiste antes, para evitar tarjetas de ensayo repetidas:
+
+```js
+const cultivoVistaPrevia = {
+  nombre: "Cilantro",
+  dias: 12,
+  agua: 1.5,
+  estado: "crecimiento"
+};
+
+function crearTarjetaDeEjemplo(cultivo) {
+  const columna = document.createElement("div");
+  columna.className = "col-md-6 col-lg-4";
+
+  const tarjeta = document.createElement("article");
+  tarjeta.className = "card h-100";
+
+  const cuerpo = document.createElement("div");
+  cuerpo.className = "card-body";
+
+  const titulo = document.createElement("h3");
+  titulo.className = "h5";
+  titulo.textContent = cultivo.nombre;
+
+  const detalle = document.createElement("p");
+  detalle.className = "text-secondary";
+  detalle.textContent =
+    cultivo.dias + " días · " + cultivo.agua + " litros · " + cultivo.estado;
+
+  cuerpo.append(titulo, detalle);
+  tarjeta.append(cuerpo);
+  columna.append(tarjeta);
+  return columna;
+}
+
+const contenedorVistaPrevia = document.getElementById("listaCultivos");
+contenedorVistaPrevia.append(crearTarjetaDeEjemplo(cultivoVistaPrevia));
+```
+
+Observa cuatro pasos:
+
+1. `cultivoVistaPrevia` conserva los datos independientemente de la interfaz.
+2. `crearTarjetaDeEjemplo(cultivo)` **recibe un objeto** y utiliza sus propiedades.
+3. `return` devuelve la columna HTML construida; no la agrega automáticamente al documento.
+4. `append()` inserta la tarjeta en `listaCultivos`.
+
+**Predice y modifica:** cambia `nombre`, `dias` y `estado` del objeto, recarga y observa qué texto cambia. La función no necesita modificaciones para representar otro cultivo con las mismas propiedades. Si agregas un atributo desconocido como `cultivo.color` sin definirlo, ¿qué obtienes?
+
+Este ejemplo construye solo una vista previa; todavía **no recorre un arreglo, no elimina las tarjetas estáticas ni actualiza indicadores**. Esas decisiones son parte de la actividad integradora.
+
+### Preparar una búsqueda sin resolver el filtro
+
+JavaScript distingue las mayúsculas de las minúsculas al comparar cadenas:
+
+```js
+const nombreParaBuscar = "Tomate";
+console.log(nombreParaBuscar.includes("tom")); // false
+console.log(nombreParaBuscar.toLowerCase().includes("tom")); // true
+console.log(" Lechuga ".trim().toLowerCase()); // "lechuga"
+```
+
+`toLowerCase()` convierte una cadena a minúsculas, `includes()` comprueba si contiene un texto y `trim()` elimina espacios externos. Estos métodos **devuelven** resultados: no modifican automáticamente el valor original de una variable.
+
+En el evento `input` que ya creaste, sustituye el `console.log()` anterior por estas instrucciones **dentro del mismo listener**:
+
+```js
+const textoEscrito = campoBusqueda.value.trim().toLowerCase();
+const coincideTomate = "Tomate".toLowerCase().includes(textoEscrito);
+console.log("¿Coincide con Tomate?", coincideTomate);
+```
+
+Este es un **fragmento para agregar al manejador existente**, no otro programa completo. Prueba con `tom`, `TOM`, `lech` y un campo vacío. ¿Por qué una búsqueda vacía coincide con cualquier cadena? No agregues otro listener `input` que haga lo mismo: modifica el que ya existe.
+
+### Comprender la actualización de una lista
+
+Para mostrar de nuevo una colección sin duplicar resultados, necesitarás limpiar el contenido anterior y crear los elementos vigentes. Este ejemplo es **temporal**; colócalo al final de las pruebas y recarga para recuperar las tarjetas iniciales:
+
+```js
+const panelParaPrueba = document.getElementById("listaCultivos");
+panelParaPrueba.replaceChildren();
+
+const textoTemporal = document.createElement("p");
+textoTemporal.textContent = "La lista se ha vaciado para volver a construirla";
+panelParaPrueba.append(textoTemporal);
+```
+
+`replaceChildren()` sin argumentos elimina los hijos del contenedor, no el contenedor. En el reto tendrás que decidir cuándo llamarlo y qué elementos volver a agregar a partir de los datos.
+
 ### Actividades
 
 1. Cambia el título principal de la sección de cultivos por otro texto mediante JavaScript y vuelve al texto original.
@@ -677,6 +802,21 @@ Provoca intencionalmente un error escribiendo `getElementByID` (con `D` mayúscu
 ## Práctica 1.7 — Formularios y validación de entradas
 
 En la sección **Registrar un cultivo** hay cuatro controles. El HTML define el formulario; JavaScript debe leer sus datos, comprobarlos y reaccionar. No necesitas enviar información a un servidor. El formulario tiene el atributo `novalidate` para que puedas practicar las validaciones mediante JavaScript, en lugar de depender exclusivamente de los mensajes automáticos del navegador.
+
+### Diferenciar el valor de un campo y el dato que necesita la aplicación
+
+Al leer un `input` de tipo numérico mediante `.value`, recibes un **texto**. Revisa los cuatro campos del formulario: `nombreCultivo`, `diasCultivo`, `aguaCultivo` y `estadoCultivo`.
+
+| Campo | Ejemplo de `.value` | Dato esperado después de validar |
+| --- | --- | --- |
+| Nombre | `" Albahaca "` | `"Albahaca"` (texto sin espacios externos) |
+| Días | `"10"` | `10` (número entero) |
+| Agua | `"2.5"` | `2.5` (número finito) |
+| Estado | `"semilla"` | `"semilla"` (una opción permitida) |
+
+El formulario incluye `novalidate` para practicar las comprobaciones mediante JavaScript. Aunque algunos navegadores impiden escribir determinados caracteres en los campos numéricos, **no debes considerar eso como sustituto de la validación propia**.
+
+**Antes de programar:** inspecciona los atributos `id` y `name` de los cuatro controles. `getElementById()` utiliza el `id`. Después identifica dónde se utiliza `preventDefault()` en el manejador `submit`.
 
 ### Evitar el envío tradicional y leer datos
 
@@ -708,6 +848,75 @@ formularioEjemplo.addEventListener("submit", (evento) => {
 
 Este ejemplo **todavía no registra ningún cultivo**: solo valida nombre y días. Tampoco valida los campos de agua y estado; esos son parte de tu trabajo posterior.
 
+### Completar las validaciones paso a paso
+
+El ejemplo anterior valida nombre y días. Practica ahora con los dos datos restantes **dentro del mismo manejador `submit`**, después de la primera condición `if` y antes de mostrar el mensaje de éxito:
+
+```js
+const aguaTexto = document.getElementById("aguaCultivo").value.trim();
+const agua = Number(aguaTexto);
+const estado = document.getElementById("estadoCultivo").value;
+
+if (aguaTexto === "" || !Number.isFinite(agua) || agua < 0) {
+  mensajeEjemplo.className = "mt-3 alert alert-danger";
+  mensajeEjemplo.textContent = "Revisa la cantidad de agua.";
+  return;
+}
+```
+
+Este fragmento **no es un programa independiente**. `Number.isFinite()` es útil para confirmar que la conversión produjo un número finito. No olvides que `0` es una cantidad permitida en este ejercicio, mientras que un campo vacío no significa cero.
+
+Todavía falta comprobar el estado. Puedes contrastarlo con el conjunto permitido usando condiciones lógicas o el método `includes()` de un arreglo. Por ejemplo:
+
+```js
+const estadosPermitidos = ["semilla", "crecimiento", "cosecha"];
+console.log(estadosPermitidos.includes("crecimiento")); // true
+console.log(estadosPermitidos.includes("desconocido")); // false
+```
+
+Este último ejemplo **puede ejecutarse de manera independiente** en `js/fundamentos.js`. Aplica la misma idea al valor de `estado` dentro del formulario. Si no es una opción permitida, muestra un error y detén la operación mediante `return`.
+
+### Construir un objeto a partir de datos ya validados
+
+Una vez que los cuatro valores hayan superado todas las condiciones, podrás representarlos como un solo registro. Agrega el siguiente **fragmento dentro del manejador `submit`, después de tus validaciones**:
+
+```js
+const registroDeEnsayo = {
+  nombre: nombre,
+  dias: dias,
+  agua: agua,
+  estado: estado
+};
+
+console.table([registroDeEnsayo]);
+```
+
+La parte izquierda de cada entrada es el nombre de la propiedad; la derecha es el dato leído y validado. Se permite escribir, por ejemplo, `nombre` en vez de `nombre: nombre` cuando ambos tienen el mismo identificador, pero utiliza primero la versión explícita para comprender qué ocurre.
+
+**Comprueba:** escribe `Orégano`, `9`, `1.25` y `crecimiento`. El objeto debe conservar `nombre` y `estado` como cadenas, y `dias` y `agua` como números. Cambia solamente el estado y comprueba que la estructura del objeto no cambia.
+
+### Ejercicio puente — Guardar registros sin construir todavía el gestor
+
+Antes de resolver las tarjetas dinámicas, realiza esta tarea limitada:
+
+1. Declara un **arreglo vacío de ensayo** fuera del evento `submit`.
+2. Cada vez que el formulario reciba cuatro datos válidos, agrega el objeto que construiste al arreglo con `push()`.
+3. Después de agregarlo, utiliza `console.table()` para mostrar **todos** los registros de ensayo.
+4. Intenta enviar un formulario inválido: el arreglo no debe cambiar.
+5. Realiza dos registros válidos consecutivos: el arreglo debe contener dos objetos diferentes con sus propias propiedades.
+
+Para comprobar tu solución, usa estas entradas:
+
+| Registro | Nombre | Días | Agua | Estado | Resultado |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Albahaca | 10 | 2.5 | semilla | Agrega un objeto |
+| 2 | Perejil | 0 | 0 | crecimiento | Agrega un segundo objeto |
+| 3 | Nombre vacío | 4 | 1 | cosecha | No agrega objeto |
+
+**No actualices todavía las tarjetas ni los indicadores.** El objetivo es comprender la secuencia `leer → validar → crear objeto → agregar al arreglo`. En el reto integrador decidirás cómo utilizar esa colección para actualizar toda la interfaz.
+
+Si repites el ejercicio, reutiliza o reemplaza el listener `submit` anterior: varios manejadores que registren el mismo formulario pueden producir duplicaciones.
+
 ### Actividades
 
 1. Envía el formulario con nombre `Albahaca` y días `12`. Debe aparecer un mensaje de éxito con esos datos básicos.
@@ -717,6 +926,9 @@ Este ejemplo **todavía no registra ningún cultivo**: solo valida nombre y día
 5. Lee `estadoCultivo`. Acepta solo `"semilla"`, `"crecimiento"` o `"cosecha"`.
 6. Haz que el mensaje de error indique qué campo necesita corrección en vez de mostrar un texto genérico.
 7. Comprueba que ningún envío inválido cambie los indicadores ni agregue tarjetas.
+
+8. Ejecuta el ejercicio puente con dos registros válidos y uno inválido. Verifica el tamaño del arreglo después de cada intento.
+9. Comprueba que `agua = 1.25` se almacena como número y no como cadena; el campo tiene `step="any"` para permitir decimales de distinta precisión.
 
 ### Depuración: error de datos
 
