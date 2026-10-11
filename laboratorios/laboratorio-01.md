@@ -442,7 +442,7 @@ Provoca intencionalmente un error escribiendo `getElementByID` (con `D` mayúscu
 
 ## Práctica 1.7 — Formularios y validación de entradas
 
-En la sección **Registrar un cultivo** hay cuatro controles. El HTML define el formulario; JavaScript debe leer sus datos, comprobarlos y reaccionar. No necesitas enviar información a un servidor.
+En la sección **Registrar un cultivo** hay cuatro controles. El HTML define el formulario; JavaScript debe leer sus datos, comprobarlos y reaccionar. No necesitas enviar información a un servidor. El formulario tiene el atributo `novalidate` para que puedas practicar las validaciones mediante JavaScript, en lugar de depender exclusivamente de los mensajes automáticos del navegador.
 
 ### Evitar el envío tradicional y leer datos
 
@@ -488,7 +488,7 @@ Este ejemplo **todavía no registra ningún cultivo**: solo valida nombre y día
 
 Evalúa primero `Number("")` en la Consola. Después quita temporalmente la comprobación `diasTexto === ""` de tu ejercicio, deja los días vacíos y observa si la conversión podría aceptar un dato no ingresado. Restaura la condición.
 
-**Comprobación:** se debe impedir la recarga del formulario, mostrar retroalimentación legible y rechazar explícitamente valores vacíos o no permitidos. En la actividad integradora utilizarás esa validación para crear objetos, no solamente mensajes.
+**Comprobación:** se debe impedir la recarga del formulario, mostrar retroalimentación legible y rechazar explícitamente valores vacíos o no permitidos. En la actividad integradora utilizarás esa validación para crear objetos, no solamente mensajes. Reutiliza este controlador de `submit` o reemplázalo al integrar la solución: no dejes dos manejadores que procesen el mismo registro por duplicado.
 
 ---
 
