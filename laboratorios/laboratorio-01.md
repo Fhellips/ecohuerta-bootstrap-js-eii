@@ -940,30 +940,120 @@ Evalúa primero `Number("")` en la Consola. Después quita temporalmente la comp
 
 ## Práctica 1.8 — Depurar código y comprobar comportamiento
 
-Los errores no siempre se ven como un mensaje rojo. Algunos detienen la ejecución y otros producen datos incorrectos aunque el programa continúe.
+Algunos errores detienen la ejecución y muestran un mensaje; otros permiten que el programa funcione, pero producen resultados incorrectos. Para investigar conviene reproducir el problema con pocos datos, observar qué sucede y cambiar **una cosa a la vez**.
 
-Para cada caso, trabaja con un fragmento aislado, **antes de consultar una respuesta externa**:
+### Un procedimiento para investigar
 
-1. **Sintaxis:** `console.log("Registro"`. Corrige el cierre de la instrucción.
-2. **Referencia:** `console.log(cultivoDesconocido)` sin declarar la variable. Comprueba el identificador escrito.
-3. **Tipo:** `const valor = null; console.log(valor.nombre);`. Averigua por qué no puede leerse la propiedad.
-4. **Conversión:** `const total = "5" + 2; console.log(total);`. Corrige el cálculo para que la salida sea `7`.
-5. **Condición:** `if (estado = "cosecha")`. Explica por qué asignar no equivale a comparar.
-6. **Índice:** intenta obtener el nombre de un elemento que no está en el arreglo. Antes de acceder a propiedades de ese elemento, comprueba que exista.
-7. **DOM:** selecciona un identificador que no existe y trata de modificar su texto. Identifica la selección fallida.
-8. **Lógica:** en un contador de cosecha, suma uno por cada cultivo, aunque no esté en cosecha. Modifica el algoritmo para sumar solo los que cumplen el criterio.
+1. Predice cuál debería ser el resultado.
+2. Ejecuta el código y lee el mensaje de la Consola, si lo hay.
+3. Anota el archivo, la línea señalada y el valor de las variables relevantes.
+4. Utiliza `console.log()` o `console.table()` para observar valores intermedios.
+5. Formula una explicación de la causa antes de editar.
+6. Corrige el código y repite la prueba original.
+7. Añade otro caso de prueba para confirmar que la corrección no introdujo un problema nuevo.
 
-En cada caso escribe como comentario: **qué esperabas, qué observaste, cuál era la causa y cómo lo comprobaste después de corregirlo**.
+Los ejemplos siguientes contienen **errores intencionales**. Ejecútalos por separado en `js/fundamentos.js` o, cuando se indique DOM, en `js/main.js`. Comenta el fragmento después de investigar: un error de sintaxis en el archivo puede impedir que se ejecuten otras prácticas.
 
-### Herramientas para investigar
+### Caso A — Error de sintaxis
 
-- `console.log(valor)` permite inspeccionar variables antes y después de una operación.
-- `console.table(arreglo)` presenta arreglos de objetos en forma tabular.
-- `console.error(mensaje)` muestra un mensaje destacado; no reemplaza el tratamiento del problema.
-- La pestaña **Sources/Fuentes** de las herramientas del navegador permite colocar puntos de interrupción y avanzar línea a línea. Prueba una pausa dentro de tu ciclo de la Práctica 1.4.
-- Observa la línea del error y lee la traza antes de editar varios archivos a la vez.
+```js
+console.log("Comenzó el registro"
+```
 
-**Comprobación:** cuando termines, `fundamentos.html` y `index.html` deben abrirse sin errores no intencionales en la Consola.
+Intenta ejecutar. ¿Qué símbolo falta para cerrar correctamente la instrucción? Corrígelo y comprueba que se muestra el mensaje.
+
+### Caso B — Variable inexistente
+
+```js
+const nombreCorrecto = "Tomate";
+console.log(nombreCorrepto);
+```
+
+Observa `ReferenceError`. Compara el nombre declarado con el utilizado y corrige la diferencia. JavaScript distingue las letras y también su orden.
+
+### Caso C — Acceso a una propiedad inexistente
+
+```js
+const cultivoDesconocido = null;
+console.log(cultivoDesconocido.nombre);
+```
+
+Identifica el tipo de problema. Antes de acceder a `nombre`, comprueba si el valor contiene un objeto válido. Prueba luego reemplazando `null` por `{ nombre: "Tomate" }`.
+
+### Caso D — Conversión incorrecta
+
+```js
+const unidadesTexto = "5";
+const nuevasUnidades = 2;
+const unidadesTotales = unidadesTexto + nuevasUnidades;
+console.log(unidadesTotales);
+```
+
+Se esperan `7` unidades, pero el resultado es otro. Comprueba el tipo de cada variable y realiza la conversión apropiada antes de sumar.
+
+### Caso E — Asignación dentro de una condición
+
+```js
+let estadoParaDepurar = "semilla";
+
+if (estadoParaDepurar = "cosecha") {
+  console.log("Listo para cosechar");
+} else {
+  console.log("Aún no está listo");
+}
+
+console.log("Estado final:", estadoParaDepurar);
+```
+
+**Predice:** ¿por qué muestra cosecha si el estado inicial era semilla? Inspecciona el estado antes y después del `if`. Corrige el operador para **comparar** sin modificar accidentalmente el dato.
+
+### Caso F — Índice fuera del arreglo
+
+```js
+const registrosDePrueba = [
+  { nombre: "Tomate" },
+  { nombre: "Lechuga" }
+];
+
+console.log(registrosDePrueba[2].nombre);
+```
+
+El arreglo tiene dos elementos, pero sus índices son `0` y `1`. Antes de acceder al nombre, comprueba si la posición solicitada existe. Prueba las posiciones `0`, `1` y `2` y explica la diferencia.
+
+### Caso G — Selector del DOM que no encuentra un elemento
+
+En `js/main.js`, prueba temporalmente:
+
+```js
+const panelInexistente = document.getElementById("listaDeCultivos");
+console.log(panelInexistente);
+panelInexistente.textContent = "Prueba";
+```
+
+En `index.html` el identificador real es `listaCultivos`. Inspecciona el error que produce leer una propiedad de `null`. Corrige el identificador y elimina el fragmento cuando termines. No cambies el HTML solamente para ocultar un error de escritura en JavaScript.
+
+### Caso H — Error lógico que no detiene el programa
+
+```js
+const estadosDePrueba = ["cosecha", "semilla", "cosecha"];
+let contadorCosecha = 0;
+
+for (const estado of estadosDePrueba) {
+  contadorCosecha++;
+}
+
+console.log(contadorCosecha);
+```
+
+Este programa imprime `3`, pero solo **2** elementos cumplen el criterio de cosecha. Modifica el cuerpo del ciclo para contar únicamente los estados correctos. Después prueba un arreglo sin cosechas y otro con todas sus entradas en cosecha.
+
+### Herramientas para localizar problemas
+
+La Consola muestra errores y valores. También puedes utilizar `console.table(arreglo)` para revisar objetos, `console.error(mensaje)` para mostrar mensajes de prueba y la pestaña **Sources/Fuentes** del navegador para colocar un punto de interrupción (*breakpoint*). Prueba una pausa dentro del `for` del caso H y observa cómo cambia `contadorCosecha` en cada iteración.
+
+Si una tarjeta no aparece en la página, revisa primero tres puntos: **el objeto tiene datos**, **la función crea los elementos** y **el contenedor recibe esos elementos**. Si un formulario agrega dos registros por clic, comprueba si registraste el mismo listener `submit` más de una vez.
+
+**Comprobación:** una vez corregidos los ejercicios de ensayo, `fundamentos.html` y `index.html` deben abrirse sin errores no intencionales. Explica al menos un error de sintaxis, uno de ejecución y uno lógico, indicando cómo los detectaste.
 
 ---
 
@@ -974,6 +1064,18 @@ En cada caso escribe como comentario: **qué esperabas, qué observaste, cuál e
 EcoHuerta muestra tres cultivos y un formulario, pero inicialmente sus indicadores, tarjetas y controles son ilustrativos. Necesitas transformarlo en una aplicación que mantenga una colección de cultivos en memoria y permita consultar y registrar información desde la interfaz.
 
 Trabaja principalmente en `js/main.js`; puedes realizar ajustes puntuales en `index.html` o `css/style.css` si son necesarios. No reemplaces Bootstrap ni cambies los identificadores que utiliza el ejercicio.
+
+### Preparar el archivo antes del reto
+
+Los ejemplos de las prácticas 1.6 y 1.7 se utilizaron para observar comportamientos aislados. Antes de integrar la aplicación:
+
+1. Comenta o retira de `js/main.js` las tarjetas de demostración y las pruebas de selección que no formen parte de tu diseño definitivo.
+2. Conserva **un solo** manejador para el evento `submit` del formulario.
+3. Decide si reutilizarás tus funciones y validaciones anteriores; evita mantener dos arreglos que pretendan representar el mismo catálogo.
+4. Comprueba que las tarjetas iniciales del HTML sean reemplazadas por las generadas desde el arreglo **sin duplicarlas**.
+5. Inicia con los tres cultivos de ejemplo y realiza las pruebas obligatorias de la actividad.
+
+Lo que ya practicabas por separado ahora se conecta mediante el flujo **datos → validación → actualización del arreglo → actualización visual**. No necesitas utilizar todos los ejemplos anteriores al mismo tiempo.
 
 ### Datos iniciales
 
