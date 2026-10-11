@@ -43,6 +43,22 @@ Guarda, recarga `fundamentos.html` y observa la pestaña **Consola**. `console.l
 
 **Comprueba:** la operación numérica produce `13` y la concatenación con una cadena produce `85`. Las comillas cambian el tipo de dato de `"8"`.
 
+### Cómo se ejecuta el código
+
+Cuando abres `fundamentos.html`, el navegador lee el HTML y encuentra una referencia a `js/fundamentos.js`. Ejecuta sus instrucciones y muestra en la Consola los valores enviados mediante `console.log()`. La Consola es una herramienta del navegador; **no es la terminal de VS Code**.
+
+La secuencia de trabajo es: **editar JavaScript → guardar → recargar la página → observar la Consola**. Si modificas el archivo y no recargas, seguirás observando la ejecución anterior.
+
+En `fundamentos.html` encontrarás una etiqueta como esta:
+
+```html
+<script src="js/fundamentos.js" defer></script>
+```
+
+`src` indica el archivo que se cargará. `defer` permite que el navegador termine de analizar el documento antes de ejecutar ese script externo. Abre las herramientas del navegador en **Consola**, no en **Elementos**. Si no aparece el mensaje inicial, comprueba que el archivo se guardó, que abriste el HTML correcto y que la ruta coincide con la carpeta `js`.
+
+**Prueba controlada:** modifica el mensaje de bienvenida, guarda y recarga. Después cambia temporalmente `src` a un nombre de archivo inexistente, observa en Consola o Red/Network el fallo de carga y restaura la ruta correcta.
+
 ### Actividades
 
 1. Muestra tu nombre y, en una instrucción diferente, el nombre de un cultivo.
@@ -108,6 +124,69 @@ console.log(12 === "12");
 
 **Comprueba:** `"123"`, `15`, `NaN`, `true` y `false`, respectivamente. `NaN` significa que la operación no obtuvo un número válido. También debes recordar que `Number("")` produce `0`: antes de convertir un formulario tendrás que verificar que el campo no esté vacío.
 
+### Distinguir declaración, asignación y tipo
+
+Estas tres operaciones no significan lo mismo:
+
+```js
+const nombreDePrueba = "Rábano";  // Declara y asigna una cadena
+let unidadesDePrueba = 8;        // Declara un número que puede cambiar
+unidadesDePrueba = 12;           // Reasigna el valor anterior
+
+console.log(nombreDePrueba);
+console.log(unidadesDePrueba);
+console.log(typeof unidadesDePrueba);
+```
+
+Predice: se muestran `Rábano`, `12` y `number`. Las comillas indican que `"Rábano"` es texto; el número `12` no lleva comillas. Un dato booleano representa `true` o `false`, y no debe confundirse con la cadena `"true"`.
+
+Observa también dos valores que encontrarás al depurar:
+
+```js
+let pendienteDeAsignacion;
+const datoAusente = null;
+
+console.log(pendienteDeAsignacion); // undefined
+console.log(datoAusente);          // null
+console.log(typeof pendienteDeAsignacion); // "undefined"
+```
+
+`undefined` indica aquí que todavía no se ha asignado un valor; `null` se utiliza para representar expresamente la ausencia de un dato. No son lo mismo que `0` ni que `""`. Por una particularidad histórica, `typeof null` devuelve `"object"`; no debes concluir que `null` es un objeto que puedes consultar.
+
+**Modifica:** asigna un número a `pendienteDeAsignacion` e imprime su tipo nuevamente. Intenta luego asignarle una cadena y explica por qué JavaScript permite cambiar el tipo de esa variable.
+
+### Operadores que conviene diferenciar
+
+```js
+const precioDePrueba = 2500;
+const cantidadDePrueba = 3;
+const descuentoDePrueba = 1000;
+
+console.log(precioDePrueba * cantidadDePrueba);
+console.log(precioDePrueba * cantidadDePrueba - descuentoDePrueba);
+console.log(cantidadDePrueba >= 3);
+console.log(cantidadDePrueba === "3");
+console.log(cantidadDePrueba !== 0);
+```
+
+La multiplicación se calcula antes que la resta; puedes utilizar paréntesis para hacer explícito el orden. `=` asigna un valor, `===` pregunta por la igualdad estricta y `!==` pregunta por la desigualdad estricta. No intercambies asignación y comparación dentro de un `if`.
+
+Predice los resultados y comprueba: `7500`, `6500`, `true`, `false` y `true`.
+
+### Conversión: comprobar antes de operar
+
+| Expresión | Resultado | Explicación |
+| --- | --- | --- |
+| `"5" + 2` | `"52"` | Se concatena texto |
+| `Number("5") + 2` | `7` | Primero se convierte |
+| `Number("4.5")` | `4.5` | Admite decimales con punto |
+| `Number("")` | `0` | No significa que se haya ingresado un dato |
+| `Number("hola")` | `NaN` | No se pudo convertir a número |
+
+En un formulario, comprueba primero que el valor no esté vacío y luego valida que la conversión sea adecuada. Esta diferencia será importante cuando construyas el registro de cultivos.
+
+**Ensayo:** prueba `Number("  ")`, `Number("-3")` y `Number("2,5")`. Registra cuáles producen `0`, un número negativo o `NaN`, respectivamente.
+
 ### Actividades
 
 1. Define variables para un producto con nombre, precio unitario, unidades disponibles y disponibilidad. Muestra sus tipos.
@@ -165,6 +244,38 @@ if (temperaturaEjemplo >= 18 && temperaturaEjemplo <= 30 && tieneAguaEjemplo) {
 ```
 
 `&&` exige que todas las condiciones sean verdaderas; `||` acepta al menos una; `!` invierte un booleano. Cambia `tieneAguaEjemplo` a `false` y predice qué sucede.
+
+### Operadores lógicos: Y, O y negación
+
+En un cultivo pueden existir varias razones independientes para mostrar una alerta. Compara los siguientes resultados:
+
+```js
+const litrosDisponibles = 1;
+const temperaturaActual = 34;
+const revisarPorAgua = litrosDisponibles < 2;
+const revisarPorCalor = temperaturaActual > 30;
+
+console.log(revisarPorAgua && revisarPorCalor); // Ambas condiciones
+console.log(revisarPorAgua || revisarPorCalor); // Al menos una condición
+console.log(!revisarPorAgua);                   // Invierte el booleano
+```
+
+Antes de ejecutarlo, identifica el valor booleano de cada variable. Para estos valores, las salidas son `true`, `true` y `false`. Luego modifica únicamente `litrosDisponibles` a `4` y vuelve a predecir.
+
+| A | B | `A && B` | `A \|\| B` |
+| --- | --- | --- | --- |
+| `true` | `true` | `true` | `true` |
+| `true` | `false` | `false` | `true` |
+| `false` | `true` | `false` | `true` |
+| `false` | `false` | `false` | `false` |
+
+**Aplica:** construye una condición que muestre «Revisar cultivo» si se cumple *cualquiera* de las dos alertas, y «Sin alertas» en caso contrario. Después cambia los valores para comprobar las cuatro combinaciones de la tabla. Estos límites son reglas de simulación para practicar programación.
+
+### Una decisión con varias ramas
+
+En la cadena `if / else if / else`, JavaScript ejecuta la **primera rama cuya condición sea verdadera**. Por eso el orden de los límites importa. En el ejemplo de humedad, cuando el valor es `30`, no entra en la primera condición y sí entra en la segunda; cuando vale `61`, entra en `else`.
+
+Comprueba también los casos extremos `-1` y `101`. Tal como está escrito, el ejemplo de humedad **los clasifica** aunque esos valores no tengan sentido como porcentaje. Modifícalo para mostrar `"Humedad inválida"` si el dato no está entre 0 y 100. Prueba `0`, `30`, `60`, `100` y ambos valores inválidos.
 
 ### Actividades
 
@@ -242,6 +353,68 @@ while (intentosEjemplo < 3) {
   intentosEjemplo++;
 }
 ```
+
+### Observar un ciclo paso a paso
+
+Antes de introducir nuevos métodos, analiza esta versión reducida:
+
+```js
+const diasObservados = [5, 10, 15];
+
+for (let posicion = 0; posicion < diasObservados.length; posicion++) {
+  console.log("Índice:", posicion, "Valor:", diasObservados[posicion]);
+}
+```
+
+| Iteración | `posicion` | Condición `posicion < 3` | Valor leído |
+| --- | --- | --- | --- |
+| Primera | 0 | Verdadera | 5 |
+| Segunda | 1 | Verdadera | 10 |
+| Tercera | 2 | Verdadera | 15 |
+| Siguiente comprobación | 3 | Falsa | No se ejecuta el cuerpo |
+
+El índice cambia **después** de cada vuelta. El ciclo finaliza cuando la condición es falsa. Si utilizaras `<=` en vez de `<`, intentarías acceder a una posición fuera del arreglo, como ocurre en el ejercicio de depuración.
+
+**Predice:** ¿cuántas líneas se mostrarán si el arreglo contiene un único valor? ¿Y si está vacío? Ejecuta ambas variantes.
+
+### Recorrer índices o valores
+
+Usa `for` con índice cuando necesitas conocer o modificar una posición del arreglo. Utiliza `for...of` cuando necesitas trabajar directamente con cada valor:
+
+```js
+const cantidadesDePrueba = [4, 7, 2];
+
+for (let i = 0; i < cantidadesDePrueba.length; i++) {
+  console.log("Posición " + i + ": " + cantidadesDePrueba[i]);
+}
+
+for (const cantidad of cantidadesDePrueba) {
+  console.log("Cantidad: " + cantidad);
+}
+```
+
+Los dos ciclos recorren tres elementos, pero el primero permite mostrar la posición. `for...of` no entrega un índice automáticamente.
+
+### Evitar un cálculo inválido
+
+Para obtener un promedio, necesitas una suma y una cantidad de elementos. Si no hay valores, debes decidir qué hacer **antes de dividir**:
+
+```js
+const medicionesDePrueba = [];
+let sumaMediciones = 0;
+
+for (const medicion of medicionesDePrueba) {
+  sumaMediciones += medicion;
+}
+
+if (medicionesDePrueba.length === 0) {
+  console.log("No hay mediciones para promediar");
+} else {
+  console.log(sumaMediciones / medicionesDePrueba.length);
+}
+```
+
+Prueba luego con `[2, 4, 6]` y comprueba que muestra `4`. El arreglo vacío no debe generar un promedio numérico inventado ni una división por cero.
 
 ### Actividades
 
@@ -329,6 +502,67 @@ console.log(describirCultivo(cultivosDeEjemplo[1]));
 ```
 
 Predice el resultado. Cambia el argumento para consultar otro objeto.
+
+### Parámetros, argumentos y resultado: tres pasos
+
+Compara estas funciones. Ejecútalas por separado, observando qué cambia en cada una:
+
+```js
+function saludarCultivo() {
+  console.log("Bienvenido al registro");
+}
+
+function mostrarNombreCultivo(nombre) {
+  console.log("Cultivo: " + nombre);
+}
+
+function calcularConsumo(aguaSemanal, numeroSemanas) {
+  return aguaSemanal * numeroSemanas;
+}
+
+saludarCultivo();
+mostrarNombreCultivo("Cilantro");
+const consumoCalculado = calcularConsumo(2.5, 4);
+console.log("Consumo:", consumoCalculado);
+```
+
+La primera no recibe datos. La segunda recibe un **parámetro**, `nombre`; `"Cilantro"` es el **argumento** que le pasas al llamarla. La tercera recibe dos parámetros y entrega un resultado con `return`, para que el cálculo pueda guardarse o utilizarse en otra expresión.
+
+**Predice:** ¿qué imprime `calcularConsumo(2.5, 4)` si solo escribes la llamada, sin `console.log()`? La función devuelve `10`, pero no imprime nada por sí misma. Comprueba la diferencia entre *devolver* y *mostrar*.
+
+### Variables locales y alcance
+
+```js
+const tipoDeUnidad = "litros";
+
+function describirRiego(cantidad) {
+  const mensajeLocal = cantidad + " " + tipoDeUnidad;
+  return mensajeLocal;
+}
+
+console.log(describirRiego(3));
+// La línea siguiente produciría un error si la activas:
+// console.log(mensajeLocal);
+```
+
+`cantidad` y `mensajeLocal` se utilizan dentro de la función; no puedes acceder a `mensajeLocal` desde afuera. La constante `tipoDeUnidad` fue declarada fuera y la función puede leerla. Esto se llama **alcance de las variables**. Prefiere pasar los datos necesarios mediante parámetros en lugar de depender de muchas variables externas.
+
+**Experimenta:** activa la línea comentada, lee `ReferenceError` y vuelve a comentarla. Después cambia `tipoDeUnidad` por `"mililitros"` y observa cómo afecta la función.
+
+### Separar cálculo y presentación
+
+```js
+function costoTotalProducto(precio, unidades) {
+  return precio * unidades;
+}
+
+const totalProducto = costoTotalProducto(1800, 3);
+console.log("Total a pagar: " + totalProducto);
+```
+
+La función se ocupa del cálculo; `console.log()` se ocupa de mostrarlo. Esta separación permitirá utilizar una función para calcular indicadores de EcoHuerta y otra para escribir esos resultados en la página.
+
+**Modifica:** comprueba `costoTotalProducto(1800, 0)`, `costoTotalProducto(1800, 1)` y `costoTotalProducto(1800, 5)`. Si el precio o las unidades llegan como texto de un formulario, recuerda validarlos antes de realizar el cálculo.
 
 ### Actividades
 
