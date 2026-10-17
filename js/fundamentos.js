@@ -243,3 +243,106 @@ const promedioCultivos = sumaCultivos / cantidadesCultivos.length;
 console.log("Suma:", sumaCultivos);
 console.log("Promedio:", promedioCultivos);
 
+
+console.log("Práctica 1.5: Objetos y funciones");
+
+// Actividad 1: modificar un objeto
+cultivoEjemplo.responsable = "Andrés";
+cultivoEjemplo.estado = "crecimiento";
+
+console.log(
+    cultivoEjemplo.nombre + " está en " +
+    cultivoEjemplo.estado + " y su responsable es " +
+    cultivoEjemplo.responsable
+);
+
+// Actividad 2: validar cantidades
+function esCantidadValida(cantidad) {
+    return Number.isFinite(cantidad) && cantidad >= 0;
+}
+
+console.log("Cantidad 0:", esCantidadValida(0));
+console.log("Cantidad 2.5:", esCantidadValida(2.5));
+console.log("Cantidad -1:", esCantidadValida(-1));
+console.log("Cantidad NaN:", esCantidadValida(NaN));
+console.log("Cantidad Infinity:", esCantidadValida(Infinity));
+
+// Cultivos de ejemplo
+const cultivosDeEjemplo = [
+    { nombre: "Tomate", dias: 85, agua: 7, estado: "cosecha" },
+    { nombre: "Lechuga", dias: 25, agua: 3, estado: "crecimiento" },
+    { nombre: "Zanahoria", dias: 5, agua: 2, estado: "semilla" }
+];
+
+// Actividad 3: contar cultivos por estado
+function contarPorEstado(lista, estadoBuscado) {
+    let total = 0;
+
+    for (const cultivo of lista) {
+        if (cultivo.estado === estadoBuscado) {
+            total++;
+        }
+    }
+
+    return total;
+}
+
+console.log("Cultivos en cosecha:", contarPorEstado(cultivosDeEjemplo, "cosecha"));
+console.log("Cultivos en crecimiento:", contarPorEstado(cultivosDeEjemplo, "crecimiento"));
+
+// Actividad 4: promedio de agua semanal
+function promedioAgua(lista) {
+    if (lista.length === 0) {
+        return 0;
+    }
+
+    let suma = 0;
+
+    for (const cultivo of lista) {
+        suma += cultivo.agua;
+    }
+
+    return suma / lista.length;
+}
+
+console.log("Promedio de agua:", promedioAgua(cultivosDeEjemplo));
+
+// Actividad 5: inventario de una tienda
+const productos = [
+    { nombre: "Semillas", precio: 1800, existencias: 10 },
+    { nombre: "Macetas", precio: 5000, existencias: 4 },
+    { nombre: "Abono", precio: 3500, existencias: 6 }
+];
+
+function calcularInventario(lista) {
+    let total = 0;
+
+    for (const producto of lista) {
+        total += producto.precio * producto.existencias;
+    }
+
+    return total;
+}
+
+console.log("Valor del inventario:", calcularInventario(productos));
+
+// Actividad 6: modificar un objeto sin afectar los demás
+const cultivosIndependientes = cultivosDeEjemplo.map(cultivo => ({ ...cultivo }));
+
+cultivosIndependientes[0].estado = "crecimiento";
+
+console.log("Estado del primer cultivo modificado:", cultivosIndependientes[0].estado);
+console.log("Estado del segundo cultivo:", cultivosIndependientes[1].estado);
+
+// Función flecha
+const duplicarEjemplo = numero => numero * 2;
+console.log("Duplicar 6:", duplicarEjemplo(6));
+
+// Separar cálculo y presentación
+function costoTotalProducto(precio, unidades) {
+    return precio * unidades;
+}
+
+console.log("Total del producto:", costoTotalProducto(1800, 3));
+
+console.log("Práctica 1.5 completada");
