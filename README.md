@@ -25,7 +25,6 @@ EcoHuerta es una aplicación web de práctica para aprender **JavaScript desde c
 
 No necesitas Node.js, npm ni un servidor para los ejercicios propuestos. Puedes abrir los archivos HTML directamente en un navegador moderno. Se requiere **conexión a internet para cargar Bootstrap desde su CDN**; la lógica JavaScript propia se ejecuta en el navegador sin servicios externos.
 
-> **Punto de partida:** la interfaz incluye tarjetas ilustrativas y controles visibles, pero el registro, búsqueda, filtrado y actualización de indicadores todavía no están programados. Esas funcionalidades forman parte del trabajo del aprendiz.
 
 ## Tecnología
 
@@ -34,3 +33,34 @@ No necesitas Node.js, npm ni un servidor para los ejercicios propuestos. Puedes 
 - HTML5 y un archivo CSS adicional.
 
 Documentación de consulta: [JavaScript en MDN](https://developer.mozilla.org/es/docs/Web/JavaScript/Guide) y [Bootstrap 5.3](https://getbootstrap.com/docs/5.3/getting-started/introduction/).
+
+
+
+## Funcionalidades implementadas
+
+La aplicación EcoHuerta permite gestionar cultivos mediante JavaScript:
+
+- Visualizar cultivos en tarjetas dinámicas.
+- Registrar nuevos cultivos mediante un formulario.
+- Validar los datos ingresados.
+- Buscar cultivos por nombre sin distinguir mayúsculas y minúsculas.
+- Filtrar cultivos por estado.
+- Actualizar los indicadores de cultivos registrados, en crecimiento y en cosecha.
+- Mostrar un mensaje cuando no hay resultados.
+
+## Pruebas realizadas
+
+| Prueba | Resultado esperado |
+|---|---|
+| Abrir la aplicación con los tres cultivos iniciales | Se muestran Tomate, Lechuga y Zanahoria. |
+| Buscar un cultivo por su nombre | Se muestran los cultivos que coinciden con la búsqueda. |
+| Filtrar por estado | Se muestran únicamente los cultivos del estado seleccionado. |
+| Registrar un cultivo con datos válidos | El cultivo aparece en la lista y se actualizan los indicadores. |
+
+## Problema encontrado y solución
+
+Durante el desarrollo fue necesario conectar los controles de la interfaz con JavaScript. Se utilizaron eventos para gestionar las búsquedas, los filtros y el envío del formulario, y se implementaron funciones para actualizar las tarjetas y los indicadores.
+
+## Punto de partida
+
+El proyecto comenzó con una interfaz preparada en HTML, CSS y Bootstrap. Durante el laboratorio se incorporó la lógica JavaScript para convertirla en un gestor interactivo de cultivos.
